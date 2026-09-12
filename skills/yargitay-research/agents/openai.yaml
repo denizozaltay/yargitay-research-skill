@@ -1,0 +1,8 @@
+interface:
+  display_name: "Yargıtay Research"
+  short_description: "Verify and research official Yargıtay precedent"
+  default_prompt: "Use $yargitay-research to research this issue and verify every relied-on decision against the official Yargıtay full text."
+
+policy:
+  allow_implicit_invocation: true
+

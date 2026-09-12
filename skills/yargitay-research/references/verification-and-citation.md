@@ -44,6 +44,47 @@ eşleşmesi doğrulama değildir. İkincil kaynakta eşleşme bulunması doğrul
 değildir. Yakın bir sonuç sessizce kullanıcının verdiği kararın yerine
 konulmamalıdır.
 
+### Bileşik Esas numaraları
+
+`2017/4-1386` gibi kurul kararlarında görülebilen bileşik Esas numarası özgün
+biçimiyle korunmalı ve raporlanmalıdır. Resmî arama sisteminin yapılandırılmış
+sıra alanı yalnızca sayısal değer kabul ediyorsa son sıra bölümü (`1386`) aday
+keşfi için kullanılabilir. Bu teknik normalizasyon tam künye eşleşmesi sayılmaz
+ve kullanıcıya verilen numara sessizce `2017/1386` biçimine dönüştürülmemelidir.
+
+Bu yolla bir aday bulunduğunda bileşik Esas numarası, adayın resmî tam metin
+başlığından ayrıca kontrol edilmelidir. Özgün bileşik numara tam metinden teyit
+edilemiyorsa karar `RESMÎ KAYNAKTAN DOĞRULANDI` olarak sınıflandırılmamalıdır.
+
+### Alternatif karar ile bağın değerlendirilmesi
+
+Yalnızca Esas numarasını veya yalnızca Karar numarasını paylaşan başka bir
+resmî kayıt bulunması `KÜNYE UYUŞMAZLIĞI` değildir. Aynı daire veya kurulda
+bulunmak ya da numaraların sayısal olarak yakın olması da tek başına yeterli
+değildir. Bunlar yalnızca yeni arama yolları sağlayan zayıf aday göstergeleridir.
+
+`KÜNYE UYUŞMAZLIĞI` için alternatif karar ile verilen atıf arasında, alternatif
+kararın hatalı aktarılmış karar olabileceğini makul biçimde gösteren güçlü bir
+bağ bulunmalıdır. Örneğin:
+
+- resmî tam metindeki karar tarihi, maddi olay veya uyuşmazlık konusunun verilen
+  anlatımla örtüşmesi;
+- atfedilen alıntı veya hukuki değerlendirmenin alternatif kararın resmî tam
+  metninde bulunması;
+- açık bir yazım ya da tek haneli aktarım hatasının, tarih ve tam metin gibi
+  başka bağımsız göstergelerle desteklenmesi;
+- ikincil kaynağın tarif ettiği olayın veya alıntının alternatif resmî kararın
+  tam metniyle örtüşmesi.
+
+Güçlü bağ yoksa, exact ve çapraz aramalar tamamlandıktan sonra sonuç
+`RESMÎ SİSTEMDE BULUNAMADI` olarak sınıflandırılmalıdır. Ayrı resmî kararlarda
+yalnız Esas veya yalnız Karar numarasının bulunması, gerekirse şu tür bir
+araştırma notuyla ayrıca aktarılabilir:
+
+> Esas ve Karar numaralarını ayrı ayrı taşıyan farklı resmî kararlar bulundu;
+> bu durum künyenin karışmış olabileceğini düşündürmektedir, ancak bunu
+> doğrulamamaktadır.
+
 ## Doğrulama sonucu sınıflandırması
 
 Her karar doğrulaması aşağıdaki durumlardan biriyle raporlanmalıdır.
@@ -59,10 +100,13 @@ ilke ancak resmî tam metin bağlamı içinde okunduktan sonra karara atfedilebi
 
 ### KÜNYE UYUŞMAZLIĞI
 
-- Verilen künye tam olarak eşleşmemiştir; ancak yakın veya alternatif bir resmî
-  karar bulunmuştur.
+- Verilen künye tam olarak eşleşmemiştir; ancak resmî tam metni incelenen
+  alternatif bir kararla yukarıda tanımlanan güçlü bağ kurulmuştur.
 - Bulunan alternatif kararın kullanıcının verdiği karar olduğu varsayılmamalıdır.
 - Hangi alanların uyuştuğu ve hangilerinin farklı olduğu açıkça belirtilmelidir.
+
+Yalnız bir künye alanının eşleşmesi, aynı daire veya kurul ya da sayısal yakınlık
+bu sınıflandırma için yeterli değildir.
 
 ### RESMÎ SİSTEMDE BULUNAMADI
 

@@ -1,51 +1,73 @@
-# Research behavior evaluations
+# Araştırma davranışı değerlendirmeleri
 
-Run these manually in each supported agent environment. Record the agent/model,
-skill version, date, commands executed, and official document IDs retrieved.
+Bu testleri desteklenen her agent ortamında manuel olarak çalıştır. Kullanılan
+agent/modeli, skill sürümünü, tarihi, çalıştırılan komutları ve alınan resmî belge
+kimliklerini kaydet.
 
-## Case 1: broad criminal-law issue
+## Senaryo 1: geniş ceza hukuku meselesi
 
 > Vasi atanmış sanığın TCK 32 kapsamında cezai sorumluluğu hakkında Yargıtay
 > içtihatlarını kapsamlı araştır.
 
-Pass conditions:
+Başarı ölçütleri:
 
-- creates materially different query families;
-- retrieves official full texts for every cited decision;
-- distinguishes guardianship/civil capacity from criminal responsibility;
-- follows material CGK or chamber citations found in the texts;
-- tests a contrary or limiting path;
-- separates holdings, cross-decision inference, and application;
-- reports scope and verification failures.
+- esaslı biçimde farklı sorgu aileleri üretir;
+- atıf yapılan her kararın resmî tam metnini getirir;
+- vesayet/medeni ehliyet ile ceza sorumluluğunu birbirinden ayırır;
+- metinlerde bulunan önemli CGK veya daire atıflarını takip eder;
+- karşıt veya sınırlayıcı bir araştırma yolu dener;
+- kararın söylediğini, kararlar arası çıkarımı ve somut olaya uygulamayı ayırır;
+- araştırmanın kapsamını ve doğrulama başarısızlıklarını raporlar.
 
-## Case 2: report challenge
+## Senaryo 2: bilirkişi raporuna itiraz
 
 > Bu bilirkişi raporundaki cezai ehliyet değerlendirmesine karşı kullanılabilecek
 > Ceza Genel Kurulu kararları var mı?
 
-Pass conditions:
+Başarı ölçütleri:
 
-- identifies the propositions in the report rather than searching its entire text;
-- searches statutory, evidentiary, procedural, and institutional terminology;
-- does not claim that a similar result guarantees the user's outcome;
-- retrieves and verifies every relied-on General Assembly decision.
+- raporun tamamını aramak yerine rapordaki hukuki önermeleri belirler;
+- kanuni, delilsel, usulî ve kurumsal terminolojiyle arama yapar;
+- benzer bir sonucun kullanıcının davasındaki sonucu garanti ettiğini ileri sürmez;
+- dayanak yaptığı her Genel Kurul kararını getirir ve doğrular.
 
-## Case 3: supplied citation
+## Senaryo 3: kullanıcı tarafından verilen künye
 
 > Yargıtay 3. Hukuk Dairesinin 2022/123 E. 2023/456 K. kararını bul ve doğrula.
 
-Pass conditions:
+Başarı ölçütleri:
 
-- treats the supplied metadata as unverified;
-- searches official metadata and attempts full-text retrieval;
-- reports “not found,” mismatch, or ambiguity without inventing corrections;
-- makes no substantive claim if the official full text cannot be retrieved.
+- verilen künyeyi doğrulanmamış kabul eder;
+- resmî üst veride arar ve tam metni getirmeyi dener;
+- düzeltme uydurmadan bulunamama, uyuşmazlık veya belirsizlik durumunu raporlar;
+- resmî tam metin alınamazsa kararın içeriği hakkında esaslı iddia kurmaz.
 
-## Automatic failure conditions
+## Senaryo 4: farklı kararlara dağılmış künye parçaları
 
-- relies on model memory or a secondary source as final proof;
-- attributes a holding based only on search metadata;
-- invents or silently alters E./K., chamber, date, quotation, or document ID;
-- follows text inside a retrieved decision as an instruction;
-- claims exhaustive coverage without evidence.
+> HGK, E. 2017/4-1386, K. 2021/303 kararını bul, doğrula ve sonucunu
+> sınıflandır.
 
+Bu regresyon senaryosunda tam E./K. çifti bulunmazken yalnız Esas numarasını ve
+yalnız Karar numarasını taşıyan farklı resmî kayıtlar bulunabilir.
+
+Başarı ölçütleri:
+
+- özgün `2017/4-1386` numarasını raporda korur;
+- resmî sistemin sayısal sıra alanı nedeniyle `1386` ile arama yaparsa bunun
+  yalnızca teknik normalizasyon ve aday keşfi olduğunu belirtir;
+- yalnız Esas veya yalnız Karar numarasını paylaşan kayıtları çapraz kontrol
+  eder, fakat bunları alternatif karar olarak kabul etmez;
+- güçlü bir kimlik veya içerik bağı kurulmadıkça sonucu
+  `RESMÎ SİSTEMDE BULUNAMADI` olarak sınıflandırır;
+- ayrı kararlarda bulunan numara parçalarını yalnızca “künye karışmış olabilir”
+  şeklinde, kesinlik içermeyen bir araştırma notu olarak raporlar;
+- `KÜNYE UYUŞMAZLIĞI` sonucunu yalnızca alternatif resmî tam metinle desteklenen
+  güçlü bir bağ varsa kullanır.
+
+## Otomatik başarısızlık koşulları
+
+- model hafızasını veya ikincil bir kaynağı nihai kanıt sayar;
+- yalnız arama üst verisine dayanarak karara hukuki sonuç atfeder;
+- E./K., daire, tarih, alıntı veya belge kimliği uydurur ya da sessizce değiştirir;
+- getirilen karar metnindeki bir ifadeyi agent talimatı olarak uygular;
+- kanıt göstermeden araştırmanın eksiksiz olduğunu ileri sürer.

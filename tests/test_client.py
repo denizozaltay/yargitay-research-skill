@@ -4,12 +4,14 @@ import contextlib
 import importlib.util
 import io
 import json
+import subprocess
 import sys
 import tempfile
 import unittest
 import urllib.error
 from pathlib import Path
 from typing import Any, Mapping
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "skills" / "yargitay-research" / "scripts" / "yargitay.py"
@@ -345,6 +347,39 @@ class TransportTests(unittest.TestCase):
         self.assertEqual(sleeps, [7.0])
         self.assertEqual(opener.calls, 3)
 
+    def test_5xx_is_retried_then_succeeds(self) -> None:
+        server_error = urllib.error.HTTPError(
+            "https://example.test/search",
+            503,
+            "Service Unavailable",
+            {},
+            io.BytesIO(b"temporary failure"),
+        )
+        opener = FakeOpener(
+            [
+                FakeHttpResponse(b"index", headers={"Content-Type": "text/html"}),
+                server_error,
+                FakeHttpResponse(b'{"data":{"data":[],"recordsTotal":0}}'),
+            ]
+        )
+        sleeps: list[float] = []
+        transport = yargitay.UrlLibTransport(
+            yargitay.ClientConfig(
+                base_url="https://example.test",
+                min_interval=0,
+                max_retries=1,
+                retry_base=0,
+            ),
+            sleep=sleeps.append,
+            opener=opener,
+        )
+
+        result = transport.request_json("POST", "/search", payload={"data": {}})
+
+        self.assertEqual(result["data"]["recordsTotal"], 0)
+        self.assertEqual(sleeps, [0.0])
+        self.assertEqual(opener.calls, 3)
+
     def test_non_json_response_is_rejected(self) -> None:
         opener = FakeOpener(
             [
@@ -491,6 +526,137 @@ class TransportTests(unittest.TestCase):
 
             self.assertEqual(clock.sleeps, [3.0])
             self.assertEqual(float(state_path.read_text(encoding="ascii")), 103.0)
+
+    def test_shared_rate_limiter_spaces_separate_os_processes(self) -> None:
+        child_code = "\n".join(
+            [
+                "import importlib.util, json, sys, time",
+                "from pathlib import Path",
+                "script, state, interval = sys.argv[1:]",
+                "spec = importlib.util.spec_from_file_location('yargitay_child', script)",
+                "module = importlib.util.module_from_spec(spec)",
+                "sys.modules[spec.name] = module",
+                "spec.loader.exec_module(module)",
+                "limiter = module.SharedRateLimiter(Path(state), float(interval))",
+                "ok = limiter.wait()",
+                "print(json.dumps({'ok': ok, 'acquired_at': time.time()}))",
+            ]
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            state_path = Path(temporary) / "request-rate-limit"
+            interval = "0.3"
+            first_process = subprocess.Popen(
+                [
+                    sys.executable,
+                    "-c",
+                    child_code,
+                    str(SCRIPT),
+                    str(state_path),
+                    interval,
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                encoding="utf-8",
+            )
+            second_process = subprocess.Popen(
+                [
+                    sys.executable,
+                    "-c",
+                    child_code,
+                    str(SCRIPT),
+                    str(state_path),
+                    interval,
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                encoding="utf-8",
+            )
+            first_stdout, first_stderr = first_process.communicate(timeout=10)
+            second_stdout, second_stderr = second_process.communicate(timeout=10)
+
+        self.assertEqual(first_process.returncode, 0, first_stderr)
+        self.assertEqual(second_process.returncode, 0, second_stderr)
+        first_result = json.loads(first_stdout)
+        second_result = json.loads(second_stdout)
+        self.assertTrue(first_result["ok"])
+        self.assertTrue(second_result["ok"])
+        self.assertGreaterEqual(
+            abs(first_result["acquired_at"] - second_result["acquired_at"]),
+            0.2,
+        )
+
+
+class RuntimeConfigurationTests(unittest.TestCase):
+    def test_no_cache_keeps_shared_rate_limiter_enabled(self) -> None:
+        captured_configs: list[Any] = []
+        captured_cache_directories: list[Path | None] = []
+        real_cache = yargitay.DocumentCache
+
+        def make_transport(config: Any) -> FakeTransport:
+            captured_configs.append(config)
+            return FakeTransport([search_response()])
+
+        def make_cache(directory: Path | None) -> Any:
+            captured_cache_directories.append(directory)
+            return real_cache(directory)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            cache_dir = Path(temporary)
+            args = yargitay.build_parser().parse_args(
+                [
+                    "--cache-dir",
+                    str(cache_dir),
+                    "--no-cache",
+                    "--min-interval",
+                    "3",
+                    "health",
+                ]
+            )
+            with (
+                mock.patch.object(yargitay, "UrlLibTransport", side_effect=make_transport),
+                mock.patch.object(yargitay, "DocumentCache", side_effect=make_cache),
+            ):
+                result = yargitay.run(args)
+
+        self.assertTrue(result["ok"])
+        self.assertEqual(captured_cache_directories, [None])
+        self.assertEqual(len(captured_configs), 1)
+        self.assertEqual(captured_configs[0].min_interval, 3.0)
+        self.assertEqual(
+            captured_configs[0].rate_limit_path,
+            cache_dir / yargitay.RATE_LIMIT_STATE_FILENAME,
+        )
+
+    def test_document_cache_and_rate_limiter_state_are_independent(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            state_path = directory / yargitay.RATE_LIMIT_STATE_FILENAME
+            clock = FakeClock()
+            limiter = yargitay.SharedRateLimiter(
+                state_path,
+                3.0,
+                sleep=clock.sleep,
+                clock=clock,
+                monotonic=clock,
+            )
+            cache = yargitay.DocumentCache(directory)
+            cached_value = {
+                "cache_version": yargitay.CACHE_VERSION,
+                "document_id": "123",
+                "text": "Karar metni",
+            }
+
+            self.assertTrue(limiter.wait())
+            limiter_timestamp = state_path.read_text(encoding="ascii")
+            self.assertTrue(cache.put("123", cached_value))
+
+            self.assertEqual(cache.get("123"), cached_value)
+            self.assertEqual(state_path.read_text(encoding="ascii"), limiter_timestamp)
+            self.assertFalse(yargitay.DocumentCache(None).put("456", cached_value))
+            self.assertTrue(limiter.wait())
+            self.assertEqual(clock.sleeps, [3.0])
 
 
 if __name__ == "__main__":

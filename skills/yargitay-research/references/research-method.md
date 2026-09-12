@@ -131,6 +131,23 @@ hemen doygun sayma. O başlık için en az bir yeni, hedefli sorgu ailesi çalı
 özel ve komşu hükümler, tarihsel madde numarası, eş anlamlı mahkeme dili, somut
 vakıa, talep/zarar kalemi ve ilgili merci yollarından uygun olanları dene.
 
+Kullanıcının sonucunu etkileyen merkezi bir alt soru bu turdan sonra da yalnız
+yakın veya analojik kararlarla destekleniyorsa önce araştırma uzayını yeniden
+kur. İlk çerçeveden bağımsız olarak taraf ve hukuki ilişkiyi, zarar veya olay
+mekanizmasını, uygulanabilecek hukuki rejimleri, talep türlerini ve usulî
+sorunları yeniden çıkar; bunların farklı bileşimleriyle alternatif bir resmî
+sorgu ailesi çalıştır. Böylece daha önce sonuç veren fakat olgusal olarak uzak
+bir karar ailesinin araştırmayı gereksiz biçimde daraltmasına izin verme.
+
+Bu yeniden çerçeveleme de doğrudan destek sağlamazsa ve ilgili araçlara erişim
+varsa, arama motorları ile ikincil hukuk kaynaklarında sınırlı bir aday keşif
+turu yap. Bu kaynakları yalnız yeni E./K. adayları ve resmî aramada kullanılacak
+ayırt edici ifadeler bulmak için kullan. Her adayı yeniden resmî yapılandırılmış
+E./K. araması, belge kimliği ve resmî tam metin zincirinden geçir. Resmî tam
+metni doğrulanamayan adayı nihai analize dahil etme. Yeni aday gelmemesi,
+adayların konu dışı çıkması veya doğrulamanın sürekli başarısız olması halinde
+bu turu sonlandır ve kalan boşluğu açıkça bildir.
+
 Sonuç alınamazsa başka bir hukuki daldaki kararı boşluğu doldurmak için kullanma.
 Hangi sorgu yollarının denendiğini ve o başlıkta neden kesin sonuca
 ulaşılamadığını açıkça belirt.
@@ -140,6 +157,10 @@ ulaşılamadığını açıkça belirt.
 Tam metin yeni bir belirleyici terim, hüküm, istisna, atıf veya çelişki ortaya
 çıkardığında yeni araştırma turu yap. Aşağıdakiler birlikte makul ölçüde
 sağlandığında dur:
+
+Daha önce bulunan ve doğrulanan aynı karar ailesinin farklı sorgularda tekrar
+gelmesi, merkezi alt soru için yeni olgusal ve hukuki araştırma dalları
+denenmediyse araştırma doygunluğu değildir.
 
 - yeni sorgular çoğunlukla daha önce incelenen karar ve ilkeleri getiriyor;
 - önemli içtihat zinciri kontrol edildi;
@@ -159,6 +180,19 @@ sayısını, araştırma kesim tarihini, erişilemeyen materyalleri ve önemli �
 Sonucu kronolojik karar dökümü yerine hukuki sorular çevresinde düzenle. En güçlü
 kararları, ortak şartları, anlamlı farklılıkları, olaya en yakın kararları,
 lehe/aleyhe noktaları ve uygulama sınırlarını açıkla.
+
+Kararların kullanıcı olayına yakınlığını sunarken şu ayrımı kullan:
+
+- **Doğrudan emsal:** Merkezi hukuki ilişki, sonucu etkileyen temel vakıalar ve
+  ilgili hukuki rejim büyük ölçüde örtüşür.
+- **Yakın emsal:** Aynı hukuki meseleye temas eder; ancak sonucu etkileyebilecek
+  önemli bir vakıa, taraf ilişkisi, zarar mekanizması veya hukuki rejim farklıdır.
+- **Analojik emsal:** Karardaki daha genel bir ilke yararlıdır; fakat merkezi olay
+  veya hukuki ilişki belirgin biçimde farklıdır.
+
+Ortak sonuç, genel konu benzerliği veya aynı kanun maddesine temas tek başına bir
+kararı doğrudan emsal yapmaz. Yakınlık derecesini yükseltmek için farklılıkları
+gizleme; doğrudan emsal bulunamadıysa bunu açıkça söyle.
 
 Şu üç düzeyi görünür biçimde ayır:
 

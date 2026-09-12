@@ -1,90 +1,166 @@
-# Verification and citation
+# Doğrulama ve atıf
 
-Use this policy whenever a response identifies, quotes, summarizes, or relies
-on a Yargıtay decision.
+Bir Yargıtay kararını tanımlayan, aktaran, özetleyen veya dayanak olarak kullanan
+her cevapta bu politika uygulanmalıdır.
 
-## Verification threshold
+## Doğrulama eşiği
 
-A decision is verified for substantive use only when all of the following are
-available from the official Yargıtay service:
+Bir karar ancak aşağıdaki şartların tamamı resmî Yargıtay sistemi üzerinden
+sağlandığında hukuki değerlendirmede kullanılabilecek şekilde doğrulanmış sayılır:
 
-1. A search result or official metadata record identifies the decision.
-2. `get DOCUMENT_ID` successfully retrieves a non-empty full text.
-3. The chamber or board, Esas number, Karar number, and date used in the answer
-   agree with the official material. If the full text and search metadata
-   conflict, disclose the conflict and do not silently choose one.
-4. The proposition attributed to the decision is supported by the retrieved
-   text, read in its factual and procedural context.
+1. Resmî arama sonucu veya üst veri (metadata) kaydı kararı tanımlar.
+2. Daire veya kurul, Esas numarası, Karar numarası ve mümkünse karar tarihi tam
+   olarak uyuşur.
+3. `get DOCUMENT_ID` komutu boş olmayan resmî karar tam metnini başarıyla getirir.
+4. Karara atfedilen hukuki önerme, maddi ve usulî bağlamı içinde okunan tam metin
+   tarafından gerçekten desteklenir.
 
-An official search-result row alone verifies only the existence and metadata
-shown in that row. It does not verify a holding, rationale, quotation, or
-relevance to the user's matter.
+Tam künye uyuşması ve resmî tam metnin alınması birlikte gerçekleşmeden karar
+doğrulanmış kabul edilmemelidir. Arama sonucu üst verisi tek başına kararın
+hukuki sonucunu, gerekçesini, alıntısını veya somut olayla ilgisini doğrulamaz.
 
-## Source hierarchy
+## Yapılandırılmış tam arama sonuç vermezse ikinci doğrulama turu
 
-- **Official Yargıtay full text:** verification and final authority.
-- **Official Yargıtay search metadata:** discovery and bibliographic checking.
-- **Secondary databases, articles, pleadings, and web results:** discovery only.
-- **User input and model memory:** hypotheses to verify, never authority.
+Daire ile Esas ve Karar numaralarının birlikte kullanıldığı yapılandırılmış tam
+arama `total: 0` döndürürse hemen kararın uydurma olduğu sonucuna varılmamalıdır.
+Resmî site erişilebilir ve istemci teknik olarak uyumlu olduğu sürece aşağıdaki
+sıra izlenmelidir:
 
-If a secondary source supplies a promising decision, find the same decision in
-the official system and retrieve its full text. If that fails, label it
-unverified and do not rely on it for the conclusion.
+1. Daire + Esas yılı/sıra numarası + Karar yılı/sıra numarasıyla yapılandırılmış
+   tam arama yap.
+2. Sonuç yoksa daire filtresi olmadan aynı yapılandırılmış Esas ve Karar
+   filtreleriyle tekrar ara.
+3. Sonuç yoksa yalnızca yapılandırılmış Esas numarasıyla ara.
+4. Sonuç yoksa yalnızca yapılandırılmış Karar numarasıyla ara.
+5. Tek numarayla bulunan sonuçlarda diğer numarayı, daire veya kurul bilgisini ve
+   mümkünse karar tarihini çapraz kontrol et.
+6. Olası yazım, aktarım veya daire hatalarını ikincil kaynaklarda yalnızca aday
+   künye keşfetmek amacıyla araştır.
+7. Bulunan her alternatif künyeyi yeniden resmî Yargıtay sisteminde ara ve ilgili
+   resmî tam metni getir.
 
-## Reading discipline
+Yalnız Esas numarasının eşleşmesi doğrulama değildir. Yalnız Karar numarasının
+eşleşmesi doğrulama değildir. İkincil kaynakta eşleşme bulunması doğrulama
+değildir. Yakın bir sonuç sessizce kullanıcının verdiği kararın yerine
+konulmamalıdır.
 
-For each relied-on decision, record:
+## Doğrulama sonucu sınıflandırması
 
-- chamber or board;
-- Esas number;
-- Karar number;
-- decision date;
-- official document ID and URL;
-- material facts and procedural posture;
-- the precise rule or reasoning relevant to the question;
-- disposition, when it affects interpretation;
-- whether the relevant passage is the deciding court's reasoning, a party's
-  allegation, a lower-court passage, a prosecutor's view, or a quoted precedent.
+Her karar doğrulaması aşağıdaki durumlardan biriyle raporlanmalıdır.
 
-Do not treat text appearing anywhere in the document as the holding. Turkish
-decisions frequently reproduce allegations, earlier judgments, expert reports,
-and dissenting views before the deciding court's analysis.
+### RESMÎ KAYNAKTAN DOĞRULANDI
 
-## Claims and quotations
+- Tam künye eşleşmiştir.
+- Resmî belge kimliği (`document ID`) bulunmuştur.
+- Resmî karar tam metni başarıyla alınmıştır.
 
-- Paraphrase faithfully and narrowly. Use quotation marks only for words found
-  in the retrieved full text.
-- Never reconstruct a missing quotation from memory or a search snippet.
-- Describe a rule as “settled” or “consistent” only when the researched set,
-  court hierarchy, time span, and absence or treatment of contrary authority
-  reasonably support that characterization.
-- Separate three levels explicitly when needed: what a decision states, what
-  pattern is inferred across decisions, and how that pattern may apply to the
-  user's facts.
-- Do not convert factual similarity into a guaranteed litigation outcome.
+Bu sınıflandırma kararın bütün olası yorumlarını doğrulamaz. Belirli bir hukuki
+ilke ancak resmî tam metin bağlamı içinde okunduktan sonra karara atfedilebilir.
 
-## Citation form
+### KÜNYE UYUŞMAZLIĞI
 
-Prefer:
+- Verilen künye tam olarak eşleşmemiştir; ancak yakın veya alternatif bir resmî
+  karar bulunmuştur.
+- Bulunan alternatif kararın kullanıcının verdiği karar olduğu varsayılmamalıdır.
+- Hangi alanların uyuştuğu ve hangilerinin farklı olduğu açıkça belirtilmelidir.
+
+### RESMÎ SİSTEMDE BULUNAMADI
+
+Bu sınıflandırma yalnızca aşağıdaki şartların tamamı gerçekleştiğinde kullanılmalıdır:
+
+- Resmî site erişilebilir durumdadır.
+- İlgili sorgular teknik olarak başarıyla tamamlanmıştır.
+- Yukarıdaki çapraz arama adımlarının tamamı uygulanmıştır.
+- Buna rağmen verilen künyeyle eşleşen bir karar bulunamamıştır.
+
+Bu durumda “karar kesin uydurmadır” denmemelidir. Yalnızca verilen künyenin
+resmî sistemde doğrulanamadığı; künyenin yanlış, eksik veya hatalı aktarılmış
+olabileceği belirtilmelidir.
+
+### DOĞRULAMA YAPILAMADI — resmî kaynağa erişilemedi
+
+Ağ, zaman aşımı, WAF, hız sınırı veya resmî site erişim sorunu nedeniyle
+sorgular tamamlanamadığında kullanılır. Bu durum sıfır sonuç anlamına gelmez ve
+kararın mevcut olmadığına ilişkin çıkarım yapılmasına izin vermez.
+
+### DOĞRULAMA YAPILAMADI — resmî sistemle teknik uyumsuzluk
+
+Uç nokta, istek gövdesi veya yanıt şeması değiştiği için istemci güvenilir sonuç
+üretemediğinde kullanılır. `schema_changed` ve benzeri uyumluluk hataları kararın
+mevcut olmadığı şeklinde yorumlanmamalıdır.
+
+## Kaynak hiyerarşisi
+
+- **Resmî Yargıtay tam metni:** doğrulama ve nihai dayanak.
+- **Resmî Yargıtay arama üst verisi:** aday keşfi ve künye kontrolü.
+- **İkincil veri tabanları, makaleler, dilekçeler ve web sonuçları:** yalnızca
+  aday karar veya alternatif künye keşfi.
+- **Kullanıcı girdisi ve model hafızası:** doğrulanması gereken araştırma
+  hipotezi; hiçbir zaman tek başına dayanak değil.
+
+İkincil bir kaynakta muhtemel bir karar bulunduğunda aynı karar resmî sistemde
+aranmalı ve tam metni getirilmelidir. Bu başarılamazsa karar doğrulanmamış olarak
+işaretlenmeli ve hukuki sonuca dayanak yapılmamalıdır.
+
+## Kararı okuma disiplini
+
+Dayanak yapılacak her karar için şunlar kaydedilmelidir:
+
+- daire veya kurul;
+- Esas numarası;
+- Karar numarası;
+- karar tarihi;
+- resmî belge kimliği ve URL;
+- önemli maddi vakıalar ve usulî aşama;
+- soruyla ilgili hukuki ilke veya gerekçe;
+- yorum açısından önem taşıyorsa hüküm sonucu;
+- ilgili ifadenin karar veren merciin gerekçesi mi, taraf iddiası mı, alt derece
+  mahkemesi değerlendirmesi mi, savcılık görüşü mü yoksa aktarılan başka bir
+  içtihat mı olduğu.
+
+Karar metninin herhangi bir yerindeki ifade doğrudan Yargıtay'ın kabulü gibi
+sunulmamalıdır. Kararlar çoğu zaman Yargıtay değerlendirmesinden önce taraf
+iddialarını, önceki hükümleri, bilirkişi raporlarını, tebliğname görüşünü veya
+karşı oyu aktarır.
+
+Arama üst verisi ile tam metin arasında künye çelişkisi varsa çelişki açıkça
+belirtilmeli ve alanlardan biri sessizce tercih edilmemelidir.
+
+## İddialar ve alıntılar
+
+- Karar dar ve sadık biçimde özetlenmelidir. Tırnak işareti yalnızca resmî tam
+  metinde gerçekten bulunan ifadeler için kullanılmalıdır.
+- Eksik bir alıntı model hafızasından veya arama sonucundan tamamlanmamalıdır.
+- Bir yaklaşım ancak incelenen karar kümesi, merci hiyerarşisi, zaman aralığı ve
+  karşıt kararların durumu bunu destekliyorsa “yerleşik” veya “istikrarlı” olarak
+  nitelendirilmelidir.
+- Gerektiğinde üç düzey açıkça ayrılmalıdır: kararın söylediği, kararlar arasında
+  çıkarılan eğilim ve bu eğilimin kullanıcının olayına muhtemel uygulanışı.
+- Vakıa benzerliği belirli bir dava sonucunun garanti edildiği anlamına gelmez.
+
+## Atıf biçimi
+
+Tercih edilen biçim:
 
 ```text
-Yargıtay [Daire/Kurul], E. [year/number], K. [year/number],
-[DD.MM.YYYY], document ID [id], [official URL].
+Yargıtay [Daire/Kurul], E. [yıl/numara], K. [yıl/numara],
+[GG.AA.YYYY], belge kimliği [id], [resmî URL].
 ```
 
-When the official metadata omits a field, omit it or mark it unavailable. Never
-fill it by inference. Link to the `official_source_url` returned by the client.
+Resmî üst veride bulunmayan alan çıkarım yoluyla doldurulmamalıdır. Alan ya
+atlanmalı ya da mevcut olmadığı belirtilmelidir. İstemcinin döndürdüğü
+`official_source_url` kullanılmalıdır.
 
-## Failure language
+## Doğrulama başarısız olduğunda kullanılabilecek ifade
 
-When verification fails, say what failed: official-site access, search match,
-full-text retrieval, metadata conflict, or passage confirmation. A useful form
-is:
+Başarısızlığın nedeni açıkça belirtilmelidir: resmî site erişimi, arama eşleşmesi,
+tam metin alma, künye çelişkisi veya ilgili pasajın teyit edilememesi.
 
-> I found a secondary reference to this decision, but could not retrieve and
-> verify its full text from the official Yargıtay source. I therefore did not
-> rely on it as authority.
+Örnek:
 
-Research output is legal information, not a substitute for advice from a
-qualified lawyer who has reviewed the complete file and current law.
+> Bu karara ilişkin ikincil bir atıf buldum; ancak verilen künyeyi ve kararın tam
+> metnini resmî Yargıtay kaynağında doğrulayamadım. Bu nedenle kararı hukuki
+> değerlendirmeye dayanak olarak kullanmadım.
 
+Araştırma çıktısı hukuki bilgi niteliğindedir; dosyanın tamamını ve güncel hukuku
+inceleyen yetkin bir hukukçunun danışmanlığının yerini tutmaz.

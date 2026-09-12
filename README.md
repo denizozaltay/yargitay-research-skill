@@ -8,6 +8,14 @@ stratejisini tanımlar; beraberindeki Python istemcisi yalnızca resmî kaynakta
 arama sonuçlarını ve karar tam metinlerini güvenilir, makinece okunabilir şekilde
 getirir.
 
+## Neden bu skill var?
+
+AI modelleri ve ikincil hukuk kaynakları bazen son derece inandırıcı görünen
+fakat yanlış E/K numaraları, hatalı olay özetleri veya karar metninde bulunmayan
+sözde alıntılar üretebilir. Bu skill, Yargıtay'a atfedilecek her kararı resmî
+karar bankasında bulmayı, tam metnini doğrulamayı ve yalnız bundan sonra hukuki
+analizde kullanmayı amaçlar.
+
 ## Agent için kurulum
 
 Bu GitHub reposunun kök URL'sini ChatGPT Work, Codex, Claude Code veya Agent

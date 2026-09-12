@@ -103,14 +103,38 @@ text. The official source URL retained in output is the same endpoint URL.
 
 Rapid requests can produce HTTP 429 or an HTML access-limit page. The client
 spaces requests by three seconds by default and performs bounded exponential
-backoff. Preserve that default for ordinary research; do not evade access
-controls or run aggressive parallel requests.
+backoff. The spacing timestamp is shared through the cache directory so separate
+CLI processes do not reset the limiter. `--no-cache` disables document caching,
+not this access protection. Preserve the default interval for ordinary research;
+do not evade access controls or run aggressive parallel requests.
+
+The website can also return HTTP 200 with a JSON error envelope instead of the
+normal payload:
+
+```json
+{
+  "data": null,
+  "metadata": {
+    "FMTY": "ERROR",
+    "FMC": "...",
+    "FMTE": "..."
+  }
+}
+```
+
+The client examines this envelope before validating the success schema. Known
+access-limit messages become retryable `rate_limited` errors; unknown server
+error envelopes become retryable `upstream_error` errors; invalid request data
+becomes non-retryable `official_error`. A response is classified as
+`schema_changed` only when it is not an official error envelope and its success
+shape no longer matches the expected contract.
 
 Likely failure categories:
 
 - `network_error`: connection, TLS, DNS, or timeout failure;
 - `rate_limited`: HTTP 429 or an access-limit page;
 - `upstream_error`: retryable HTTP 5xx;
+- `official_error`: the website rejected invalid request data;
 - `invalid_response`: expected JSON was not returned;
 - `schema_changed`: JSON no longer matches the known contract;
 - `document_not_found`: no usable full text was returned.
@@ -141,4 +165,3 @@ curl 'https://karararama.yargitay.gov.tr/getDokuman?id=DOCUMENT_ID' \
 When debugging a suspected schema change, compare the current `/index`
 JavaScript request construction, HTTP status and content type, JSON envelope,
 and field types. Update this reference and fixtures together with any code fix.
-

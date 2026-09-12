@@ -3,6 +3,8 @@
 Resmî Yargıtay Karar Arama sistemi üzerinde kapsamlı, iteratif ve doğrulanabilir
 içtihat araştırması yapmayı agent'a öğreten taşınabilir bir Agent Skill.
 
+Güncel istemci sürümü: **1.0.0**
+
 Bu proje bir karar listesi veya hukuk yorumu servisi değildir. Skill araştırma
 stratejisini tanımlar; beraberindeki Python istemcisi yalnızca resmî kaynaktan
 arama sonuçlarını ve karar tam metinlerini güvenilir, makinece okunabilir şekilde
@@ -86,8 +88,10 @@ Cache dosyaları karar tam metni içerebilir. Kişisel veri veya hassas dosyalar
 uygulayın.
 
 İstemci resmî sisteme yük bindirmemek için istekleri varsayılan olarak en az üç
-saniye aralıkla gönderir; 429 ve geçici sunucu hatalarında sınırlı geri çekilme
-uygular. Toplu aramalar `--max-results` ile sınırlandırılır.
+saniye aralıkla gönderir. Bu aralık ayrı CLI süreçleri arasında da korunur;
+`--no-cache` karar metni cache'ini kapatır, erişim sınırlayıcısını kapatmaz.
+İstemci 429, resmî JSON hata zarfı ve geçici sunucu hatalarında sınırlı geri
+çekilme uygular. Toplu aramalar `--max-results` ile sınırlandırılır.
 
 ## Proje yapısı
 
@@ -109,7 +113,8 @@ sitenin kendi frontend'inin kullandığı belgelenmemiş HTTP endpointleriyle
 çalışır. Endpoint veya yanıt şeması haber verilmeden değişebilir. `health`
 komutu erişimi ve beklenen arama şemasını kontrol eder; `schema_changed` hatası
 alındığında `references/yargitay-api.md` içindeki kontrollü teşhis akışı
-izlenmelidir.
+izlenmelidir. Resmî sistemin HTTP 200 içinde döndürdüğü hata zarfları önce hata
+türü bakımından incelenir ve doğrudan şema değişikliği sayılmaz.
 
 Bu proje Yargıtay Başkanlığı tarafından geliştirilmemiş veya onaylanmamıştır.
 Karar metinleri resmî kaynağa aittir. Çıktılar hukuki bilgi amaçlıdır ve somut

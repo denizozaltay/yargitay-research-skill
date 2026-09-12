@@ -87,6 +87,19 @@ class FakeOpener:
         return response
 
 
+class FakeClock:
+    def __init__(self, value: float = 100.0) -> None:
+        self.value = value
+        self.sleeps: list[float] = []
+
+    def __call__(self) -> float:
+        return self.value
+
+    def sleep(self, seconds: float) -> None:
+        self.sleeps.append(seconds)
+        self.value += seconds
+
+
 class SearchTests(unittest.TestCase):
     def test_search_builds_official_payload_and_normalizes_result(self) -> None:
         transport = FakeTransport(
@@ -348,6 +361,136 @@ class TransportTests(unittest.TestCase):
             transport.request_json("GET", "/document")
 
         self.assertEqual(context.exception.code, "invalid_response")
+
+    def test_json_rate_limit_envelope_is_retried(self) -> None:
+        error_body = json.dumps(
+            {
+                "data": None,
+                "metadata": {
+                    "FMTY": "ERROR",
+                    "FMC": "RATE_LIMIT",
+                    "FMTE": "Çok fazla istek gönderildi.",
+                },
+            },
+            ensure_ascii=False,
+        ).encode("utf-8")
+        opener = FakeOpener(
+            [
+                FakeHttpResponse(b"index", headers={"Content-Type": "text/html"}),
+                FakeHttpResponse(error_body),
+                FakeHttpResponse(b'{"data":{"data":[],"recordsTotal":0}}'),
+            ]
+        )
+        sleeps: list[float] = []
+        transport = yargitay.UrlLibTransport(
+            yargitay.ClientConfig(
+                base_url="https://example.test",
+                min_interval=0,
+                max_retries=1,
+                retry_base=0,
+            ),
+            sleep=sleeps.append,
+            opener=opener,
+        )
+
+        result = transport.request_json("POST", "/search", payload={"data": {}})
+
+        self.assertEqual(result["data"]["recordsTotal"], 0)
+        self.assertEqual(opener.calls, 3)
+        self.assertEqual(sleeps, [0.0])
+
+    def test_unknown_json_error_envelope_is_temporary_upstream_error(self) -> None:
+        error_body = json.dumps(
+            {
+                "data": None,
+                "metadata": {
+                    "FMTY": "ERROR",
+                    "FMC": "ADALET_EMPTY_EXCEPTION",
+                    "FMTE": "Temporary backend failure",
+                },
+            }
+        ).encode("utf-8")
+        opener = FakeOpener(
+            [
+                FakeHttpResponse(b"index", headers={"Content-Type": "text/html"}),
+                FakeHttpResponse(error_body),
+            ]
+        )
+        transport = yargitay.UrlLibTransport(
+            yargitay.ClientConfig(
+                base_url="https://example.test",
+                min_interval=0,
+                max_retries=0,
+            ),
+            opener=opener,
+        )
+
+        with self.assertRaises(yargitay.YargitayError) as context:
+            transport.request_json("GET", "/document")
+
+        self.assertEqual(context.exception.code, "upstream_error")
+        self.assertTrue(context.exception.retryable)
+        self.assertEqual(
+            context.exception.details["official_code"], "ADALET_EMPTY_EXCEPTION"
+        )
+
+    def test_invalid_request_envelope_is_not_retried(self) -> None:
+        error_body = json.dumps(
+            {
+                "data": None,
+                "metadata": {
+                    "FMTY": "ERROR",
+                    "FMC": "ADALET_EMPTY_EXCEPTION",
+                    "FMTE": 'Cannot deserialize value "4-1386": not a valid Integer',
+                },
+            }
+        ).encode("utf-8")
+        opener = FakeOpener(
+            [
+                FakeHttpResponse(b"index", headers={"Content-Type": "text/html"}),
+                FakeHttpResponse(error_body),
+            ]
+        )
+        transport = yargitay.UrlLibTransport(
+            yargitay.ClientConfig(
+                base_url="https://example.test",
+                min_interval=0,
+                max_retries=2,
+            ),
+            opener=opener,
+        )
+
+        with self.assertRaises(yargitay.YargitayError) as context:
+            transport.request_json("POST", "/search", payload={"data": {}})
+
+        self.assertEqual(context.exception.code, "official_error")
+        self.assertFalse(context.exception.retryable)
+        self.assertEqual(opener.calls, 2)
+
+    def test_shared_rate_limiter_spaces_separate_instances(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            state_path = Path(temporary) / "request-rate-limit"
+            clock = FakeClock()
+            first = yargitay.SharedRateLimiter(
+                state_path,
+                3.0,
+                sleep=clock.sleep,
+                clock=clock,
+                monotonic=clock,
+            )
+            second = yargitay.SharedRateLimiter(
+                state_path,
+                3.0,
+                sleep=clock.sleep,
+                clock=clock,
+                monotonic=clock,
+            )
+
+            self.assertTrue(first.wait())
+            self.assertTrue(second.wait())
+
+            self.assertEqual(clock.sleeps, [3.0])
+            self.assertEqual(float(state_path.read_text(encoding="ascii")), 103.0)
 
 
 if __name__ == "__main__":

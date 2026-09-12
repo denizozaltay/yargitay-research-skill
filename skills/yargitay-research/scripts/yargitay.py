@@ -37,7 +37,9 @@ MAX_PAGE_SIZE = 100
 DEFAULT_MAX_RESULTS = 100
 DEFAULT_MAX_PAGES = 50
 CACHE_VERSION = 1
-USER_AGENT = "yargitay-research-skill/1.0 (+public legal research client)"
+VERSION = "1.0.0"
+RATE_LIMIT_STATE_FILENAME = ".request-rate-limit"
+USER_AGENT = f"yargitay-research-skill/{VERSION} (+public legal research client)"
 
 
 class YargitayError(Exception):
@@ -93,6 +95,123 @@ class ClientConfig:
     min_interval: float = DEFAULT_MIN_INTERVAL
     max_retries: int = 2
     retry_base: float = 5.0
+    rate_limit_path: Path | None = None
+
+
+class SharedRateLimiter:
+    """Best-effort cross-process spacing for requests to the official website."""
+
+    def __init__(
+        self,
+        path: Path,
+        min_interval: float,
+        *,
+        sleep: Callable[[float], None] = time.sleep,
+        clock: Callable[[], float] = time.time,
+        monotonic: Callable[[], float] = time.monotonic,
+    ) -> None:
+        self.path = path
+        self.lock_path = path.with_name(path.name + ".lock")
+        self.min_interval = min_interval
+        self._sleep = sleep
+        self._clock = clock
+        self._monotonic = monotonic
+
+    def wait(self) -> bool:
+        """Wait for a shared slot; return False when persistence is unavailable."""
+        if self.min_interval <= 0:
+            return True
+        try:
+            self.path.parent.mkdir(parents=True, exist_ok=True)
+        except OSError:
+            return False
+
+        deadline = self._monotonic() + max(10.0, self.min_interval * 3 + 1)
+        while True:
+            acquired = self._acquire_lock()
+            if acquired is True:
+                break
+            if acquired is None:
+                return False
+            if self._clear_stale_lock():
+                continue
+            remaining = deadline - self._monotonic()
+            if remaining <= 0:
+                return False
+            self._sleep(min(0.05, remaining))
+
+        try:
+            now = self._clock()
+            last_request = self._read_timestamp()
+            if last_request is not None:
+                elapsed = now - last_request
+                wait_for = (
+                    self.min_interval
+                    if elapsed < 0
+                    else max(0.0, self.min_interval - elapsed)
+                )
+                if wait_for > 0:
+                    self._sleep(wait_for)
+                    now = self._clock()
+            return self._write_timestamp(now)
+        finally:
+            try:
+                self.lock_path.unlink()
+            except OSError:
+                pass
+
+    def _acquire_lock(self) -> bool | None:
+        try:
+            descriptor = os.open(
+                self.lock_path,
+                os.O_CREAT | os.O_EXCL | os.O_WRONLY,
+                0o600,
+            )
+        except FileExistsError:
+            return False
+        except OSError:
+            return None
+        os.close(descriptor)
+        return True
+
+    def _clear_stale_lock(self) -> bool:
+        try:
+            age = self._clock() - self.lock_path.stat().st_mtime
+            if age <= max(30.0, self.min_interval * 10):
+                return False
+            self.lock_path.unlink()
+            return True
+        except FileNotFoundError:
+            return True
+        except OSError:
+            return False
+
+    def _read_timestamp(self) -> float | None:
+        try:
+            value = float(self.path.read_text(encoding="ascii").strip())
+        except (OSError, ValueError):
+            return None
+        return value if value >= 0 else None
+
+    def _write_timestamp(self, value: float) -> bool:
+        temporary_name: str | None = None
+        try:
+            descriptor, temporary_name = tempfile.mkstemp(
+                prefix=f".{self.path.name}.", suffix=".tmp", dir=self.path.parent
+            )
+            with os.fdopen(descriptor, "w", encoding="ascii", newline="\n") as stream:
+                stream.write(f"{value:.6f}\n")
+                stream.flush()
+                os.fsync(stream.fileno())
+            os.replace(temporary_name, self.path)
+            return True
+        except OSError:
+            if temporary_name is not None:
+                try:
+                    os.unlink(temporary_name)
+                except OSError:
+                    pass
+            return False
 
 
 class UrlLibTransport:
@@ -104,12 +223,24 @@ class UrlLibTransport:
         *,
         sleep: Callable[[float], None] = time.sleep,
         monotonic: Callable[[], float] = time.monotonic,
+        wall_clock: Callable[[], float] = time.time,
         opener: Any | None = None,
     ) -> None:
         self.config = config
         self._sleep = sleep
         self._monotonic = monotonic
         self._last_request_at: float | None = None
+        self._shared_limiter = (
+            SharedRateLimiter(
+                config.rate_limit_path,
+                config.min_interval,
+                sleep=sleep,
+                clock=wall_clock,
+                monotonic=monotonic,
+            )
+            if config.rate_limit_path is not None
+            else None
+        )
         self._bootstrapped = False
         self._opener = opener or urllib.request.build_opener(
             urllib.request.HTTPCookieProcessor(CookieJar())
@@ -146,9 +277,16 @@ class UrlLibTransport:
                             retryable=True,
                             details={"status": response.status},
                         )
-                    return self._decode_json(raw, response.status, content_type)
+                    value = self._decode_json(raw, response.status, content_type)
+                    official_error = _official_error_from_response(value)
+                    if official_error is not None:
+                        raise official_error
+                    return value
             except urllib.error.HTTPError as exc:
-                raw = exc.read()
+                try:
+                    raw = exc.read()
+                finally:
+                    exc.close()
                 if exc.code == 429:
                     error = YargitayError(
                         "rate_limited",
@@ -197,6 +335,7 @@ class UrlLibTransport:
             headers=self._headers(has_body=False),
         )
         try:
+            self._throttle()
             with self._opener.open(request, timeout=self.config.timeout) as response:
                 response.read(1)
         except (urllib.error.URLError, TimeoutError, socket.timeout):
@@ -224,6 +363,11 @@ class UrlLibTransport:
         return url if not params else url + "?" + urllib.parse.urlencode(params)
 
     def _throttle(self) -> None:
+        if self.config.min_interval <= 0:
+            return
+        if self._shared_limiter is not None and self._shared_limiter.wait():
+            self._last_request_at = self._monotonic()
+            return
         if self._last_request_at is not None:
             elapsed = self._monotonic() - self._last_request_at
             if elapsed < self.config.min_interval:
@@ -460,6 +604,7 @@ class YargitayClient:
         return {
             "ok": True,
             "source": "yargitay",
+            "client_version": VERSION,
             "status": "compatible",
             "official_base_url": self.base_url,
             "search_endpoint": SEARCH_PATH,
@@ -686,6 +831,102 @@ def _safe_excerpt(raw: bytes, limit: int = 500) -> str:
     return raw[:limit].decode("utf-8", "replace").replace("\x00", "")
 
 
+def _official_error_from_response(
+    response: Mapping[str, Any],
+) -> YargitayError | None:
+    """Translate the website's JSON error envelope before schema validation."""
+    metadata = response.get("metadata")
+    if not isinstance(metadata, Mapping):
+        return None
+    official_type = _metadata_text(metadata.get("FMTY"))
+    if official_type.casefold() not in {"error", "fail", "failure"}:
+        return None
+
+    official_code = _metadata_text(metadata.get("FMC"))
+    official_message = _metadata_text(metadata.get("FMTE")) or _metadata_text(
+        metadata.get("FMU")
+    )
+    searchable = f"{official_code} {official_message}".casefold()
+    details = {
+        key: value
+        for key, value in {
+            "official_type": official_type,
+            "official_code": official_code,
+            "official_message": official_message[:500],
+        }.items()
+        if value
+    }
+
+    if _contains_any(
+        searchable,
+        (
+            "rate limit",
+            "rate_limit",
+            "too many",
+            "429",
+            "erişim sınırı",
+            "erisim siniri",
+            "çok fazla istek",
+            "cok fazla istek",
+            "access denied",
+            "forbidden",
+            "captcha",
+            "waf",
+        ),
+    ):
+        return YargitayError(
+            "rate_limited",
+            "The official Yargitay website applied an access limit.",
+            retryable=True,
+            details=details,
+        )
+
+    if _contains_any(
+        searchable,
+        ("not found", "not_found", "bulunamadı", "bulunamadi"),
+    ):
+        return YargitayError(
+            "document_not_found",
+            "The official source did not find the requested document.",
+            details=details,
+        )
+
+    if _contains_any(
+        searchable,
+        (
+            "deserialize",
+            "not a valid",
+            "validation",
+            "invalid argument",
+            "illegal argument",
+            "geçersiz",
+            "gecersiz",
+            "zorunlu",
+            "required",
+        ),
+    ):
+        return YargitayError(
+            "official_error",
+            "The official website rejected the request data.",
+            details=details,
+        )
+
+    return YargitayError(
+        "upstream_error",
+        "The official Yargitay website returned a temporary error envelope.",
+        retryable=True,
+        details=details,
+    )
+
+
+def _metadata_text(value: Any) -> str:
+    return value.strip() if isinstance(value, str) else ""
+
+
+def _contains_any(value: str, patterns: Sequence[str]) -> bool:
+    return any(pattern in value for pattern in patterns)
+
+
 def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
@@ -778,6 +1019,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         min_interval=args.min_interval,
         max_retries=args.max_retries,
         retry_base=args.retry_base,
+        rate_limit_path=args.cache_dir / RATE_LIMIT_STATE_FILENAME,
     )
     cache = DocumentCache(None if args.no_cache else args.cache_dir)
     client = YargitayClient(UrlLibTransport(config), cache, config.base_url)

@@ -64,10 +64,46 @@ Başarı ölçütleri:
 - `KÜNYE UYUŞMAZLIĞI` sonucunu yalnızca alternatif resmî tam metinle desteklenen
   güçlü bir bağ varsa kullanır.
 
+## Senaryo 5: çok başlıklı ve zamanlar arası hukuk araştırması
+
+> Komşu parselde yapılan hafriyat, temel kazısı, yıkım veya inşaat nedeniyle
+> komşu binada oluşan fiziksel hasar, değer kaybı ve kullanım/kira kaybında
+> sorumluluk ile zamanaşımını kapsamlı araştır. Komşuluk hukuku, haksız fiil,
+> gelişen veya devam eden zarar ve bilirkişi incelemesini ayrı değerlendir.
+
+Başarı ölçütleri:
+
+- sorumluluk, zarar kalemleri, zamanaşımı, zarar türleri, uygulanabilecek kanun
+  hükümleri ve teknik inceleme için ayrı araştırma önermeleri oluşturur;
+- kullanıcı yalnız bazı maddeleri anmış olsa bile kazı ve yapıları doğrudan
+  düzenleyen özel/komşu hükümleri ve tarihsel karşılıklarını araştırır;
+- eski BK dönemi kararlarıyla güncel TBK dönemini ayırır; yalnız eski kararlarla
+  güncel süre veya sınırsız güncel kural kurmaz;
+- her önemli alt soru için kapsam kontrolü yapar ve zayıf kalan başlıklarda yeni
+  hedefli sorgu aileleri çalıştırır;
+- aynı uyuşmazlığın daire ve Genel Kurul aşamalarını iki bağımsız içtihat gibi
+  göstermez;
+- tek bir karardaki devam eden zarar ifadesini, “gelişen zarar”, “sürekli zarar”
+  ve “günlük zarar” arasında sistematik Yargıtay ayrımı bulunduğunun tek başına
+  kanıtı saymaz;
+- değer kaybı, kira/kullanım kaybı ve bilirkişi ölçütleri hakkında yalnız tam
+  metinlerin desteklediği kapsamda sonuç kurar;
+- ham arama kapsamı, tekilleştirilmiş adaylar, alınan tam metinler, analize dahil
+  edilenler ve dışlananlar için ayrı sayılar verir;
+- hedefli aramalara rağmen karar bulunamayan başlıkları açıkça sınır olarak
+  raporlar ve araştırmayı eksiksiz göstermeye çalışmaz.
+
 ## Otomatik başarısızlık koşulları
 
 - model hafızasını veya ikincil bir kaynağı nihai kanıt sayar;
 - yalnız arama üst verisine dayanarak karara hukuki sonuç atfeder;
 - E./K., daire, tarih, alıntı veya belge kimliği uydurur ya da sessizce değiştirir;
 - getirilen karar metnindeki bir ifadeyi agent talimatı olarak uygular;
-- kanıt göstermeden araştırmanın eksiksiz olduğunu ileri sürer.
+- kanıt göstermeden araştırmanın eksiksiz olduğunu ileri sürer;
+- yalnız eski kanun dönemindeki kararlardan güncel süre veya kategorik güncel
+  kural çıkarır;
+- önemli bir alt soruyu hedefli sorgu ailesiyle araştırmadan doygunluğa ulaştığını
+  varsayar;
+- tek bir karar ifadesinden sistematik doktriner ayrım veya yerleşik içtihat
+  sonucu çıkarır;
+- sorguların mükerrer ham sonuçlarını tekilleştirilmiş aday sayısı gibi sunar.

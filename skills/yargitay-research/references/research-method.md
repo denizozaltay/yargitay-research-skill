@@ -1,99 +1,174 @@
-# Iterative Yargıtay research method
+# İteratif Yargıtay araştırma yöntemi
 
-Use this method for issue research, precedent mapping, expert-report challenges,
-or any request broader than retrieval of a known citation.
+Bu yöntem; hukuki mesele araştırması, içtihat çizgisi çıkarma, bilirkişi raporuna
+itiraz veya bilinen tek bir kararı bulmaktan daha geniş araştırmalar için
+uygulanmalıdır.
 
-## 1. Frame the problem
+## 1. Hukuki problemi ve kapsamı çerçevele
 
-Translate the request into research propositions before searching:
+Aramaya başlamadan önce talebi ayrı araştırma önermelerine dönüştür:
 
-- governing statutory provision and legal doctrine;
-- decisive factual conditions and likely distinctions;
-- procedural stage and requested remedy;
-- relevant civil/criminal chamber and any General Assembly authority;
-- time period, legislative changes, and possible terminology changes.
+- uygulanabilecek kanun hükümleri ve hukuki kurumlar;
+- sonucu değiştirebilecek maddi vakıalar ve ayrımlar;
+- usulî aşama ve talep edilen hukuki sonuç;
+- ilgili daireler ile varsa Ceza/Hukuk Genel Kurulu kararları;
+- kullanıcının açıkça sorduğu her alt mesele;
+- uygulanacak kanun dönemi, değişen hükümler ve tarihsel terminoloji.
 
-Keep the user's facts separate from facts later found in decisions.
+Yalnız kullanıcının belirttiği maddelerle yetinme. Uyuşmazlığı daha doğrudan
+düzenleyebilecek özel hükümleri, komşu maddeleri, eski kanundaki karşılıkları ve
+yeniden numaralandırılmış hükümleri aday olarak belirle. Bunları Yargıtay
+kararlarında kullanılan eski ve yeni adlarıyla ayrı ayrı ara.
 
-## 2. Build independent query families
+Güncel bir hukuk sorusunda eski kanun dönemine ait kararlar yararlı olabilir;
+ancak güncel hüküm ve süreler ayrıca kontrol edilmelidir. Yalnız eski kanun
+dönemindeki kararlardan güncel süre veya kategorik güncel kural çıkarma. Güncel
+döneme ait doğrulanmış karar bulunamazsa bu sınırı açıkça belirt.
 
-Do not submit the user's sentence repeatedly with superficial wording changes.
-Use several genuinely different paths:
+Kullanıcının vakıaları ile sonradan bulunan kararlardaki vakıaları birbirinden
+ayrı tut.
 
-- statutory terms: article numbers and formal doctrine;
-- factual vocabulary: concrete conduct, condition, evidence, or relationship;
-- procedural vocabulary: bozma, direnme, eksik inceleme, hukuka aykırılık;
-- institutional vocabulary: expert body, report type, chamber, General Assembly;
-- synonymous and historical court terminology;
-- exact phrases discovered in relevant decisions.
+## 2. Bağımsız sorgu aileleri kur
 
-For “vasi atanmış kişinin TCK 32 kapsamında cezai sorumluluğu,” useful families
-may include `"TCK 32" "akıl hastalığı"`, `vesayet cezai sorumluluk`,
-`kısıtlı ceza ehliyeti`, `ayırt etme gücü cezai sorumluluk`, and
-`adli tıp TCK 32`. These are examples, not a mandatory query list.
+Kullanıcının cümlesini yüzeysel değişikliklerle tekrar tekrar arama. Gerçekten
+farklı araştırma yolları kullan:
 
-Start broad enough to learn the court's vocabulary, then narrow with exact
-phrases, chamber, date, or E./K. filters. Record each query and why it was run so
-the final scope can be explained.
+- **Kanun yolu:** madde numaraları, özel ve komşu hükümler, eski-yeni madde
+  karşılıkları, resmî kurum adları;
+- **Doktrin yolu:** hukuki kurumlar, sorumluluk türleri, istisnalar ve ayrımlar;
+- **Vakıa yolu:** somut eylem, zarar, ilişki, delil ve teknik olgu kelimeleri;
+- **Talep yolu:** tazminat veya yaptırım türleri, zarar kalemleri ve istenen
+  giderim biçimleri;
+- **Usul yolu:** bozma, direnme, eksik inceleme, ispat, husumet, görev ve benzeri
+  karar dili;
+- **Merci yolu:** ilgili daire, Genel Kurul, bilirkişi veya uzman kurum;
+- **Karşıt yol:** ret, istisna, sınırlama, farklı sonuç ve ters maddi vakıalar;
+- **Keşif yolu:** doğrulanmış tam metinlerde bulunan ayırt edici ifadeler ve
+  atıf yapılan kararlar.
 
-## 3. Screen metadata, then retrieve texts
+Tek bir madde numarasıyla sonuç alınamaması o hukuki dalın tüketildiği anlamına
+gelmez. Maddenin adı, düzenlediği davranış, tarihsel karşılığı ve Yargıtay’ın
+kullandığı somut olay diliyle yeni sorgular oluştur.
 
-Use metadata only to prioritize candidates. Prefer candidates based on:
+Önce mahkemenin terminolojisini öğrenmeye yetecek genişlikte ara; ardından tam
+ifadeler, daire, tarih veya E./K. filtreleriyle daralt. Her sorguyu ve hangi
+araştırma önermesi için çalıştırıldığını kaydet.
 
-- matching legal issue and material facts;
-- General Assembly or directly responsible chamber;
-- recency and relevance to the applicable statutory version;
-- potential contrary or limiting authority;
-- citations to influential earlier decisions.
+## 3. Üst veriyi ele, tam metni getir
 
-Retrieve full texts for every candidate that may appear in the answer. A large
-metadata collection is not a substitute for reading a smaller set carefully.
+Üst veriyi yalnızca adayları önceliklendirmek için kullan. Şu özellikleri taşıyan
+adaylara öncelik ver:
 
-## 4. Read and extract
+- hukuki mesele ve önemli vakıalarla eşleşme;
+- Genel Kurul veya doğrudan görevli daire kararı olma;
+- uygulanacak kanun dönemine yakınlık ve güncellik;
+- karşıt veya sınırlayıcı bir yaklaşım içerme ihtimali;
+- önemli eski kararlara atıf yapma.
 
-For each text, extract the verification record described in
-`verification-and-citation.md`, plus:
+Cevapta kullanılabilecek her adayın resmî tam metnini getir. Büyük bir üst veri
+kümesi, daha küçük bir karar kümesini dikkatle okumanın yerini tutmaz.
 
-- the question actually resolved;
-- the controlling facts;
-- the court's test and evidentiary requirements;
-- the result and procedural consequence;
-- language worth using as a new search term;
-- cited decisions that may lead to an authority chain;
-- distinctions from the user's matter.
+Araştırma ölçülerini birbirine karıştırma ve mümkünse şu dört sayıyı ayrı tut:
 
-Pay attention to whose words are being reproduced. Do not mistake a party,
-expert, prosecutor, lower court, dissent, or quoted historical decision for the
-deciding court.
+1. Sorguların döndürdüğü ham sonuç kapsamı; sorgular arasında mükerrer olabilir.
+2. Belge kimliğine göre tekilleştirilmiş, incelemeye alınan aday sayısı.
+3. Resmî tam metni başarıyla getirilen karar sayısı.
+4. Nihai analize dahil edilen ve konu dışı/yardımcı görülerek dışlanan karar
+   sayıları.
 
-## 5. Follow the precedent chain
+“Aday karar sayısı” denildiğinde belge kimliğine göre tekilleştirilmiş sayı
+verilmelidir. Kesin sayı tutulmadıysa “çok sayıda” gibi belirsiz bir ifadeyi aday
+sayısı olarak sunma; taranan sayfa veya yaklaşık ham sonuç kapsamını ayrı ve
+açık biçimde raporla.
 
-Search for material cited decisions by E./K. and distinctive quoted language.
-Assess General Assemblies separately from chambers. Do not assume hierarchy
-alone resolves factual, statutory, or temporal differences.
+## 4. Tam metni oku ve çıkarım kaydı oluştur
 
-Actively look for counterexamples by reversing key facts, adding exceptions,
-and searching for rejection, distinction, or different procedural outcomes.
+Her karar için `verification-and-citation.md` içinde tanımlanan doğrulama
+kaydına ek olarak şunları çıkar:
 
-## 6. Saturation and stopping
+- gerçekten çözülen hukuki soru;
+- belirleyici maddi vakıalar;
+- uygulanan kanun hükmü ve hükmün o tarihteki sürümü;
+- mahkemenin ölçütü ve ispat/inceleme gereklilikleri;
+- sonuç ve usulî sonuç;
+- yeni sorguda kullanılabilecek karar dili;
+- içtihat zincirine götürebilecek atıflar;
+- kullanıcının meselesinden ayrılan yönler.
 
-Run another research round when a full text reveals a new controlling term,
-authority, exception, or conflict. Stop when:
+İfadenin kime ait olduğuna dikkat et. Taraf, bilirkişi, savcı, alt derece
+mahkemesi, karşı oy, özel daire veya aktarılan eski kararın görüşünü karar veren
+merciin kendi gerekçesi gibi sunma.
 
-- new searches mostly reproduce already reviewed decisions and rules;
-- the material authority chain has been checked;
-- plausible contrary paths have been tested; or
-- the declared result/time/request budget is reached.
+Bir kararın belirli bir olgudan söz etmesi, o olgu hakkında genel bir ispat veya
+hesaplama kuralı koyduğu anlamına gelmez. Teknik ve hukuki açıdan makul görünen
+genel değerlendirmeleri “karardan çıkan ilke” olarak sunmadan önce tam metinde
+dayanağını kontrol et.
 
-Do not claim database-wide exhaustiveness. Report the query families, relevant
-filters, approximate screening scope, number of full texts reviewed, cutoff
-date, unavailable materials, and unresolved conflicts when material.
+## 5. İçtihat zincirini ve karşıt yolu takip et
 
-## 7. Synthesis
+Tam metindeki önemli atıfları E./K. numarası ve ayırt edici karar diliyle ara.
+Genel Kurul ve daire kararlarını ayrı değerlendir. Hiyerarşinin tek başına
+vakıa, kanun sürümü veya zaman farklarını ortadan kaldırdığını varsayma.
 
-Organize the result around the legal question rather than a chronological dump.
-Explain the supported approach, strongest authorities, common requirements,
-meaningful divergence, factually closest decisions, favorable and unfavorable
-points, and application limits. Keep official holdings, cross-case inference,
-and case-specific assessment distinguishable.
+Temel vakıaları tersine çevirerek, istisna ve sınırlama terimleri ekleyerek veya
+farklı usulî sonuçları arayarak karşı örnekleri araştır. Aynı davanın daire ve
+Genel Kurul aşamalarını içtihat çeşitliliği sağlayan iki bağımsız uyuşmazlık gibi
+sayma; karar zinciri olarak göster.
 
+## 6. Alt-soru kapsam kontrolü yap
+
+Araştırmayı bitirmeden önce her önemli araştırma önermesi ve kullanıcı alt sorusu
+için bir kapsam kontrolü yap. Her başlığı şu durumlardan biriyle işaretle:
+
+- resmî tam metni doğrulanmış kararlarla doğrudan destekleniyor;
+- yalnız sınırlı veya dolaylı destek bulunuyor;
+- karşıt/farklılaşan karar bulundu;
+- hedefli aramalara rağmen doğrulanmış karar bulunamadı;
+- araştırma bütçesi ya da teknik engel nedeniyle açık kaldı.
+
+Önemli bir başlık yalnız sınırlı destekleniyor veya açık kalıyorsa araştırmayı
+hemen doygun sayma. O başlık için en az bir yeni, hedefli sorgu ailesi çalıştır:
+özel ve komşu hükümler, tarihsel madde numarası, eş anlamlı mahkeme dili, somut
+vakıa, talep/zarar kalemi ve ilgili merci yollarından uygun olanları dene.
+
+Sonuç alınamazsa başka bir hukuki daldaki kararı boşluğu doldurmak için kullanma.
+Hangi sorgu yollarının denendiğini ve o başlıkta neden kesin sonuca
+ulaşılamadığını açıkça belirt.
+
+## 7. Doygunluk ve durma
+
+Tam metin yeni bir belirleyici terim, hüküm, istisna, atıf veya çelişki ortaya
+çıkardığında yeni araştırma turu yap. Aşağıdakiler birlikte makul ölçüde
+sağlandığında dur:
+
+- yeni sorgular çoğunlukla daha önce incelenen karar ve ilkeleri getiriyor;
+- önemli içtihat zinciri kontrol edildi;
+- makul karşıt yollar denendi;
+- alt-soru kapsam kontrolünde önemli bir başlık gerekçesiz biçimde açık kalmadı;
+- uygulanacak kanun dönemi ve önemli hüküm değişiklikleri kontrol edildi;
+- veya önceden belirtilen süre/sonuç/istek bütçesine ulaşıldı.
+
+Bir bütçe nedeniyle durulduysa eksik kalan araştırma yollarını belirt. Veritabanı
+genelinde eksiksizlik iddiasında bulunma. Nihai raporda sorgu ailelerini, önemli
+filtreleri, tarama kapsamını, tekilleştirilmiş aday sayısını, okunan tam metin
+sayısını, araştırma kesim tarihini, erişilemeyen materyalleri ve önemli çözümsüz
+çelişkileri bildir.
+
+## 8. Sentez ve iddia kalibrasyonu
+
+Sonucu kronolojik karar dökümü yerine hukuki sorular çevresinde düzenle. En güçlü
+kararları, ortak şartları, anlamlı farklılıkları, olaya en yakın kararları,
+lehe/aleyhe noktaları ve uygulama sınırlarını açıkla.
+
+Şu üç düzeyi görünür biçimde ayır:
+
+1. Kararın açıkça söylediği ve uyguladığı kural.
+2. Birden fazla karar birlikte okunduğunda çıkarılabilen, kapsamı belirtilmiş
+   içtihat eğilimi.
+3. Kullanıcının olayına ilişkin hukuki değerlendirme veya araştırma hipotezi.
+
+Bir kararın tek bir ifadesinden Yargıtay’ın sistematik bir doktriner ayrım
+kurduğu sonucunu çıkarma. “Yargıtay ayrım yapıyor”, “yerleşik yaklaşım” veya
+benzeri güçlü ifadeleri ancak incelenen karar kümesi bunu gerçekten
+destekliyorsa kullan. Aksi halde kanıtlanan dar önermeyi söyle ve daha geniş
+ayrımın bu araştırmayla doğrulanamadığını belirt.
